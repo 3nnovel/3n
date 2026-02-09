@@ -202,3 +202,4 @@ function filterNovels() {
         card.style.display = title.includes(q) ? 'block' : 'none';
     });
 }
+
