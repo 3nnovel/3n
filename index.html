@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3N NOVEL | Official Multiverse Portal</title>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;900&family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        /* AAPKA ORIGINAL PREMIUM STYLING */
+        :root {
+            --primary: #ff3e3e;        /* Neon Red */
+            --secondary: #00fbff;      /* Cyan Blue */
+            --accent: #ffcc00;         /* Gold */
+            --bg-deep: #020202;        /* Pure Black */
+            --card-bg: #0d0d0d;        /* Dark Grey */
+            --text-main: #e0e0e0;
+            --border: rgba(255, 255, 255, 0.1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background-color: var(--bg-deep); color: var(--text-main); font-family: 'Poppins', sans-serif; line-height: 1.6; overflow-x: hidden; }
+
+        header {
+            height: 70px; background: rgba(2, 2, 2, 0.85); backdrop-filter: blur(15px);
+            border-bottom: 1px solid var(--border); display: flex; justify-content: space-between;
+            align-items: center; padding: 0 6%; position: sticky; top: 0; z-index: 1000;
+        }
+
+        .logo { font-family: 'Orbitron', sans-serif; font-weight: 900; font-size: 24px; letter-spacing: 3px; background: linear-gradient(90deg, #fff, var(--primary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; cursor: pointer; }
+
+        .btn { border-radius: 4px; padding: 10px 22px; font-family: 'Orbitron'; font-size: 10px; letter-spacing: 1px; transition: 0.4s; text-transform: uppercase; border: 1px solid transparent; cursor: pointer; }
+        .btn-red { background: var(--primary); color: #fff; box-shadow: 0 0 15px rgba(255, 62, 62, 0.3); }
+        .btn-gold { background: transparent; color: var(--accent); border-color: var(--accent); }
+        .btn-blue { background: var(--secondary); color: #000; }
+        .btn:hover { transform: translateY(-3px); filter: brightness(1.2); }
+
+        .hero { padding: 80px 5%; text-align: center; background: radial-gradient(circle at top, #1a0a0a 0%, var(--bg-deep) 70%); }
+        .search-box input { background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px; padding: 16px 25px; color: #fff; width: 100%; max-width: 500px; transition: 0.3s; margin-top: 20px; }
+
+        .container { padding: 40px 6%; }
+        .novel-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 25px; padding: 20px 0; }
+        
+        .novel-card { background: var(--card-bg); border-radius: 12px; overflow: hidden; transition: 0.5s ease; border: 1px solid var(--border); cursor: pointer; position: relative; animation: fadeIn 0.6s ease-out forwards; }
+        .novel-card:hover { transform: scale(1.05); border-color: var(--primary); z-index: 10; }
+        .novel-card img { width: 100%; height: 320px; object-fit: cover; filter: grayscale(20%); transition: 0.5s; }
+        .novel-card:hover img { filter: grayscale(0%); }
+        .card-overlay { position: absolute; bottom: 0; width: 100%; padding: 15px; background: linear-gradient(transparent, rgba(0,0,0,0.9)); }
+
+        #admin-panel { display: none; background: #111; border: 1px solid var(--accent); padding: 30px; border-radius: 15px; margin-bottom: 30px; }
+        .admin-input, .admin-textarea { width: 100%; padding: 12px; background: #050505; border: 1px solid #333; color: white; margin-bottom: 15px; border-radius: 5px; font-family: inherit; }
+
+        #reader-view { display: none; max-width: 900px; margin: 0 auto; padding: 50px 20px; }
+        .reader-body { font-size: 21px; line-height: 1.8; color: #cecece; font-family: 'Lora', serif; white-space: pre-line; }
+        .lock-container { background: var(--card-bg); border: 1px solid var(--accent); padding: 60px 30px; border-radius: 15px; text-align: center; margin-top: 40px; }
+
+        #auth-modal { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index:2000; justify-content:center; align-items:center; backdrop-filter: blur(10px); }
+        .auth-box { background: rgba(13, 13, 13, 0.95); border: 1px solid var(--border); padding: 40px; width: 90%; max-width: 400px; text-align: center; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        ::-webkit-scrollbar { width: 5px; }
+        ::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 10px; }
+    </style>
+</head>
+<body>
+
+    <div id="auth-modal">
+        <div class="auth-box">
+            <h2 style="font-family:'Orbitron'; color:var(--secondary); margin-bottom:20px;">JOIN THE CLAN</h2>
+            <input type="email" id="userEmail" class="admin-input" placeholder="Email">
+            <input type="password" id="userPass" class="admin-input" placeholder="Password">
+            <button class="btn btn-red" style="width:100%" onclick="handleAuth()">LOG IN</button>
+            <button class="btn btn-gold" style="width:100%; margin-top:10px;" onclick="closeAuth()">CANCEL</button>
+        </div>
+    </div>
+
+    <header>
+        <div class="logo" onclick="location.reload()">3N <span>NOVEL</span></div>
+        <div style="display: flex; gap: 10px;">
+            <button class="btn btn-gold" onclick="toggleAdmin()">ADMIN</button>
+            <button class="btn btn-red" id="authBtn" onclick="openAuth()">JOIN CLAN</button>
+        </div>
+    </header>
+
+    <div id="home-view">
+        <section class="hero">
+            <h1 style="font-family:'Orbitron'; font-size: 2.5rem;">MULTIVERSE PORTAL</h1>
+            <div class="search-box">
+                <input type="text" id="novelSearch" placeholder="Search for novels..." onkeyup="filterNovels()">
+            </div>
+        </section>
+
+        <div class="container">
+            <div id="admin-panel">
+                <h2 style="color:var(--accent); font-family:'Orbitron'; margin-bottom:15px;">PUBLISH CONTENT</h2>
+                <input type="text" id="admName" class="admin-input" placeholder="Novel Name">
+                <input type="number" id="admLimit" class="admin-input" placeholder="Free Chapters Limit">
+                <textarea id="admText" class="admin-textarea" rows="5" placeholder="Paste Chapter Content Here..."></textarea>
+                <button class="btn btn-blue" onclick="publishNovel()">SYNC TO MULTIVERSE</button>
+            </div>
+
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+                <h2 style="font-family:'Orbitron'; border-left: 4px solid var(--primary); padding-left:15px;">ARCHIVE</h2>
+                <div id="userStatus" style="font-size:12px; color:var(--accent);">RANK: FREE HUNTER</div>
+            </div>
+            
+            <div class="novel-grid" id="mainGrid"></div>
+        </div>
+    </div>
+
+    <div id="reader-view">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:30px;">
+            <button class="btn btn-red" onclick="location.reload()">BACK</button>
+            <h2 id="rTitle" style="font-family:'Orbitron'; color:var(--secondary);"></h2>
+            <select id="chapSelect" onchange="jumpToChap()" style="background:#111; color:#fff; padding:8px; border:1px solid var(--secondary); border-radius:5px;"></select>
+        </div>
+        <div id="rContent" class="reader-body"></div>
+        <div style="display:flex; justify-content: space-between; margin-top: 40px;">
+            <button class="btn btn-blue" onclick="moveChap(-1)">PREVIOUS</button>
+            <button class="btn btn-blue" onclick="moveChap(1)">NEXT</button>
+        </div>
+    </div>
+
+    <script>
+        /**
+         * 3N NOVEL - REPAIRED ENGINE (Conflict-Free)
+         */
+        
+        // --- DATA INITIALIZATION (No Redeclaration) ---
+        (function initialize() {
+            window.isPremium = localStorage.getItem('3n_premium') === 'true';
+            window.currentUser = localStorage.getItem('logged_user');
+
+            if (!window.db) {
+                const defaultData = {
+                    "Solo Leveling": { 
+                        img: "https://m.media-amazon.com/images/I/81L9D8+K6JL._AC_UF1000,1000_QL80_.jpg", 
+                        freeLimit: 2, 
+                        chapters: ["Chapter 1: The weakest hunter Sung Jin-Woo...", "Chapter 2: The secret of the hidden dungeon...", "Chapter 3: [LOCKED] Upgrade to see the system's power!"] 
+                    }
+                };
+                window.db = JSON.parse(localStorage.getItem('3N_MASTER_DB')) || defaultData;
+            }
+            window.activeNovel = "";
+            window.activeIndex = 0;
+        })();
+
+        // --- CORE FUNCTIONS ---
+        window.onload = function() {
+            renderHome();
+            if(window.currentUser) {
+                const btn = document.getElementById('authBtn');
+                btn.innerText = "LOGOUT";
+                btn.onclick = logout;
+            }
+            if(window.isPremium) {
+                document.getElementById('userStatus').innerText = "RANK: PREMIUM HUNTER";
+                document.getElementById('userStatus').style.color = "var(--secondary)";
+            }
+        };
+
+        function renderHome() {
+            const grid = document.getElementById('mainGrid');
+            if(!grid) return;
+            grid.innerHTML = Object.keys(window.db).map(name => `
+                <div class="novel-card" onclick="openReader('${name}')">
+                    <img src="${window.db[name].img || 'https://via.placeholder.com/300x450'}">
+                    <div class="card-overlay">
+                        <h3 style="font-family:'Orbitron'; font-size:16px;">${name}</h3>
+                        <p style="font-size:10px; color:var(--secondary)">FREE ACCESS: ${window.db[name].freeLimit} CHAPS</p>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function toggleAdmin() {
+            const p = document.getElementById('admin-panel');
+            p.style.display = (p.style.display === 'block') ? 'none' : 'block';
+            p.scrollIntoView({behavior: 'smooth'});
+        }
+
+        function publishNovel() {
+            const n = document.getElementById('admName').value.trim();
+            const l = document.getElementById('admLimit').value || 2;
+            const t = document.getElementById('admText').value.trim();
+
+            if(!n || !t) return alert("Bhai, details toh bharo!");
+
+            if(!window.db[n]) {
+                window.db[n] = { chapters: [], freeLimit: l, img: "" };
+            }
+            window.db[n].chapters.push(t);
+            window.db[n].freeLimit = l;
+
+            localStorage.setItem('3N_MASTER_DB', JSON.stringify(window.db));
+            alert("Mission Accomplished: Chapter Published!");
+            location.reload();
+        }
+
+        function openReader(name) {
+            if(!window.currentUser) return openAuth();
+            window.activeNovel = name;
+            window.activeIndex = 0;
+            document.getElementById('home-view').style.display = 'none';
+            document.getElementById('reader-view').style.display = 'block';
+            document.getElementById('rTitle').innerText = name;
+            
+            const sel = document.getElementById('chapSelect');
+            sel.innerHTML = window.db[name].chapters.map((_, i) => `<option value="${i}">CHAPTER ${i+1}</option>`).join('');
+            updateContent();
+        }
+
+        function updateContent() {
+            const limit = parseInt(window.db[window.activeNovel].freeLimit);
+            const contentBox = document.getElementById('rContent');
+            
+            if(window.activeIndex >= limit && !window.isPremium) {
+                contentBox.innerHTML = `
+                    <div class="lock-container">
+                        <i class="fas fa-lock" style="font-size:40px; color:var(--accent); margin-bottom:20px;"></i>
+                        <h2 style="font-family:'Orbitron'">TRANSMISSION ENCRYPTED</h2>
+                        <p style="margin:15px 0;">Rank up to Premium Hunter to decrypt this chapter.</p>
+                        <button class="btn btn-red" onclick="buyMembership()">UPGRADE RANK</button>
+                    </div>`;
+            } else {
+                contentBox.innerText = window.db[window.activeNovel].chapters[window.activeIndex];
+            }
+            document.getElementById('chapSelect').value = window.activeIndex;
+            window.scrollTo(0,0);
+        }
+
+        function moveChap(dir) {
+            if(window.db[window.activeNovel].chapters[window.activeIndex + dir]) {
+                window.activeIndex += dir;
+                updateContent();
+            }
+        }
+
+        function jumpToChap() {
+            window.activeIndex = parseInt(document.getElementById('chapSelect').value);
+            updateContent();
+        }
+
+        function handleAuth() {
+            const email = document.getElementById('userEmail').value;
+            if(!email) return alert("Email is mandatory!");
+            localStorage.setItem('logged_user', email);
+            location.reload();
+        }
+
+        function openAuth() { document.getElementById('auth-modal').style.display = 'flex'; }
+        function closeAuth() { document.getElementById('auth-modal').style.display = 'none'; }
+        function logout() { localStorage.removeItem('logged_user'); location.reload(); }
+
+        function buyMembership() {
+            if(confirm("Join the Elite Hunters (Premium) for ₹499?")) {
+                localStorage.setItem('3n_premium', 'true');
+                location.reload();
+            }
+        }
+
+        function filterNovels() {
+            const q = document.getElementById('novelSearch').value.toLowerCase();
+            document.querySelectorAll('.novel-card').forEach(c => {
+                c.style.display = c.innerText.toLowerCase().includes(q) ? 'block' : 'none';
+            });
+        }
+    </script>
+</body>
+</html>
