@@ -1,0 +1,116 @@
+/* 3N NOVEL - ULTIMATE PREMIUM THEME */
+
+:root {
+    --primary: #ff3e3e;        /* Neon Red */
+    --secondary: #00fbff;      /* Cyan Blue */
+    --accent: #ffcc00;         /* Gold */
+    --bg-deep: #050505;        /* Premium Deep Black */
+    --card-bg: #121212;        /* Material Dark */
+    --glass: rgba(255, 255, 255, 0.05);
+    --border: rgba(255, 255, 255, 0.1);
+}
+
+/* Smooth Scrolling & Selection */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+::selection { background: var(--primary); color: #fff; }
+
+body {
+    background-color: var(--bg-deep);
+    color: #e0e0e0;
+    font-family: 'Poppins', sans-serif;
+    line-height: 1.6;
+}
+
+/* Glassmorphic Header */
+header {
+    height: 75px;
+    background: rgba(5, 5, 5, 0.8);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 6%;
+    position: sticky;
+    top: 0;
+    z-index: 2000;
+}
+
+/* Premium Glow for Logo */
+.logo {
+    font-family: 'Orbitron', sans-serif;
+    font-weight: 900;
+    font-size: 26px;
+    letter-spacing: 2px;
+    color: #fff;
+}
+.logo span {
+    color: var(--primary);
+    text-shadow: 0 0 20px var(--primary);
+}
+
+/* Gaming Style Buttons */
+.btn {
+    border-radius: 8px;
+    padding: 12px 24px;
+    font-family: 'Orbitron';
+    font-size: 11px;
+    letter-spacing: 1px;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    cursor: pointer;
+    border: none;
+}
+
+.btn-red { 
+    background: linear-gradient(45deg, #b31217, var(--primary));
+    color: #fff; 
+    box-shadow: 0 5px 15px rgba(255, 62, 62, 0.4);
+}
+
+.btn-red:hover {
+    box-shadow: 0 8px 25px rgba(255, 62, 62, 0.6);
+    transform: translateY(-2px);
+}
+
+/* Netflix Style Cards with Glow */
+.novel-card {
+    background: var(--card-bg);
+    border-radius: 15px;
+    overflow: hidden;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    border: 1px solid var(--border);
+    position: relative;
+}
+
+.novel-card:hover {
+    transform: scale(1.03);
+    border-color: var(--secondary);
+    box-shadow: 0 0 30px rgba(0, 251, 255, 0.15);
+}
+
+.novel-card img {
+    width: 100%;
+    height: 380px;
+    object-fit: cover;
+    transition: 0.5s;
+}
+
+/* Premium Reader View */
+.reader-body {
+    font-size: 22px;
+    color: #d1d1d1;
+    background: #0a0a0a;
+    padding: 60px;
+    border-radius: 30px;
+    box-shadow: inset 0 0 50px rgba(0,0,0,0.5);
+    border: 1px solid var(--border);
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-track { background: var(--bg-deep); }
+::-webkit-scrollbar-thumb { 
+    background: linear-gradient(var(--primary), var(--secondary)); 
+    border-radius: 10px; 
+}
