@@ -1,0 +1,204 @@
+/**
+ * 3N NOVEL - MASTER JAVASCRIPT ENGINE
+ * Powered by: Gemini 3 Flash (2026 Edition)
+ */
+
+// --- 1. CONFIGURATION & DATABASE ---
+let currentUser = localStorage.getItem('logged_user') || null;
+let isPremium = localStorage.getItem('3n_premium') === 'true';
+
+// Default content agar database khali ho
+const defaultDB = {
+    "Solo Leveling": {
+        img: "https://m.media-amazon.com/images/I/81L9D8+K6JL._AC_UF1000,1000_QL80_.jpg",
+        freeLimit: 2,
+        chapters: [
+            "Chapter 1: The weakest hunter of all mankind, Sung Jin-Woo.",
+            "Chapter 2: The secret of the Double Dungeon begins.",
+            "Chapter 3: [LOCKED] The System has found a candidate."
+        ]
+    }
+};
+
+let db = JSON.parse(localStorage.getItem('3N_MASTER_DB')) || defaultDB;
+let activeNovel = "";
+let activeIndex = 0;
+
+// --- 2. INITIALIZATION ---
+window.onload = () => {
+    updateUIState();
+    renderHome();
+};
+
+function updateUIState() {
+    const authBtn = document.getElementById('authBtn');
+    const userStatus = document.getElementById('userStatus');
+    
+    if (currentUser) {
+        authBtn.innerText = "LOGOUT";
+        authBtn.classList.replace('btn-red', 'btn-gold');
+        authBtn.onclick = logout;
+    }
+
+    if (isPremium) {
+        userStatus.innerText = "PREMIUM HUNTER";
+        userStatus.style.color = "var(--neon-gold)";
+        document.getElementById('memberInfo').style.borderColor = "var(--neon-gold)";
+    }
+}
+
+// --- 3. CORE RENDERING ---
+function renderHome() {
+    const grid = document.getElementById('mainGrid');
+    if (!grid) return;
+
+    grid.innerHTML = Object.keys(db).map(name => `
+        <div class="novel-card" onclick="openReader('${name}')">
+            <img src="${db[name].img || 'https://via.placeholder.com/300x450'}" loading="lazy">
+            <div class="card-overlay">
+                <h3 style="font-family:'Orbitron'">${name}</h3>
+                <p style="color:var(--neon-blue); font-size:12px;">Free Access: ${db[name].freeLimit} Chapters</p>
+            </div>
+        </div>
+    `).join('');
+}
+
+// --- 4. AUTHENTICATION SYSTEM ---
+function openAuth() { 
+    document.getElementById('auth-modal').style.display = 'flex'; 
+}
+
+function closeAuth() { 
+    document.getElementById('auth-modal').style.display = 'none'; 
+}
+
+function handleAuth() {
+    const email = document.getElementById('userEmail').value.trim();
+    const pass = document.getElementById('userPass').value.trim();
+
+    if (!email || !pass) {
+        alert("Bhai, credentials toh dalo!");
+        return;
+    }
+
+    // Pseudo-Registration & Login
+    localStorage.setItem('user_' + email, pass);
+    localStorage.setItem('logged_user', email);
+    
+    alert("System Initialized. Welcome, Hunter!");
+    location.reload();
+}
+
+function forgetPass() {
+    const email = prompt("Enter your registered email:");
+    const saved = localStorage.getItem('user_' + email);
+    if (saved) {
+        alert("Your Password: " + saved + "\n\nTip: Keep it secret, keep it safe.");
+    } else {
+        alert("No hunter found with this email!");
+    }
+}
+
+function logout() {
+    if(confirm("Logout from the system?")) {
+        localStorage.removeItem('logged_user');
+        location.reload();
+    }
+}
+
+// --- 5. READER ENGINE ---
+function openReader(name) {
+    if (!currentUser) {
+        alert("Access Denied! Please Join the Clan first.");
+        return openAuth();
+    }
+
+    activeNovel = name;
+    activeIndex = parseInt(localStorage.getItem('save_' + name)) || 0;
+    
+    document.getElementById('home-view').style.display = 'none';
+    document.getElementById('reader-view').style.display = 'block';
+    document.getElementById('rTitle').innerText = name;
+
+    const sel = document.getElementById('chapSelect');
+    sel.innerHTML = db[name].chapters.map((_, i) => `<option value="${i}">Chapter ${i+1}</option>`).join('');
+    
+    updateContent();
+}
+
+function updateContent() {
+    const limit = db[activeNovel].freeLimit || 2;
+    const contentBox = document.getElementById('rContent');
+
+    if (activeIndex >= limit && !isPremium) {
+        contentBox.innerHTML = `
+            <div class="lock-container">
+                <i class="fas fa-crown" style="font-size:50px; color:var(--neon-gold); margin-bottom:20px;"></i>
+                <h2 style="font-family:'Orbitron'">PREMIUM CONTENT</h2>
+                <p style="margin:20px 0;">This transmission is encrypted. Upgrade your rank to continue reading.</p>
+                <button class="btn btn-gold" onclick="buyMembership()">UNLOCK MULTIVERSE</button>
+            </div>
+        `;
+    } else {
+        contentBox.innerText = db[activeNovel].chapters[activeIndex];
+    }
+
+    document.getElementById('chapSelect').value = activeIndex;
+    localStorage.setItem('save_' + activeNovel, activeIndex);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function moveChap(dir) {
+    const nextIdx = activeIndex + dir;
+    if (db[activeNovel].chapters[nextIdx]) {
+        activeIndex = nextIdx;
+        updateContent();
+    }
+}
+
+function jumpToChap() {
+    activeIndex = parseInt(document.getElementById('chapSelect').value);
+    updateContent();
+}
+
+// --- 6. ADMIN & MEMBERSHIP ---
+function toggleAdmin() {
+    const panel = document.getElementById('admin-panel');
+    panel.style.display = (panel.style.display === 'block') ? 'none' : 'block';
+    panel.scrollIntoView({ behavior: 'smooth' });
+}
+
+function publishNovel() {
+    const name = document.getElementById('admName').value.trim();
+    const limit = parseInt(document.getElementById('admLimit').value) || 2;
+    const text = document.getElementById('admText').value.trim();
+
+    if (!name || !text) return alert("Bhai, data toh dalo!");
+
+    if (!db[name]) {
+        db[name] = { img: "", freeLimit: limit, chapters: [] };
+    } else {
+        db[name].freeLimit = limit;
+    }
+
+    db[name].chapters.push(text);
+    localStorage.setItem('3N_MASTER_DB', JSON.stringify(db));
+    alert("Data Synced to Multiverse!");
+    location.reload();
+}
+
+function buyMembership() {
+    if (!currentUser) return openAuth();
+    if (confirm("Proceed to Payment for Premium Access (₹499)?")) {
+        localStorage.setItem('3n_premium', 'true');
+        location.reload();
+    }
+}
+
+function filterNovels() {
+    const q = document.getElementById('novelSearch').value.toLowerCase();
+    document.querySelectorAll('.novel-card').forEach(card => {
+        const title = card.innerText.toLowerCase();
+        card.style.display = title.includes(q) ? 'block' : 'none';
+    });
+}
